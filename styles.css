@@ -756,6 +756,10 @@ body {
   background: #222423;
 }
 
+body.admin-route {
+  overflow-y: auto;
+}
+
 .app-shell {
   position: relative;
   display: flex;
@@ -1688,7 +1692,7 @@ h2,
 .admin-page {
   min-height: 100vh;
   min-height: 100svh;
-  overflow: auto;
+  overflow: visible;
   padding: 32px 20px 60px;
   background:
     radial-gradient(ellipse at 86% 5%, rgba(166, 115, 93, 0.22), transparent 35%),

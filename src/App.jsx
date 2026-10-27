@@ -75,6 +75,12 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (!isAdminRoute) return undefined;
+    document.body.classList.add("admin-route");
+    return () => document.body.classList.remove("admin-route");
+  }, [isAdminRoute]);
+
+  useEffect(() => {
     const refreshAnimations = () => {
       AOS.refreshHard();
       window.dispatchEvent(new Event("scroll"));
