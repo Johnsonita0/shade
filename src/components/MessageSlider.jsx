@@ -87,9 +87,6 @@ export default function MessageSlider({ currentSlide, onChangeSlide, onChooseRes
       </nav>
       {slide.invitation ? (
         <>
-          <p className="response-sharing-note">
-            If you choose “Maybe later,” I’ll see that response. A date is shared only if you choose and submit one.
-          </p>
           {responseError && <p className="calendar-error" role="alert">{responseError}</p>}
           <div className="ask-actions">
             <button

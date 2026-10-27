@@ -2498,19 +2498,6 @@ h2,
   }
 }
 
-.response-sharing-note {
-  max-width: 46ch;
-  margin: 20px 0 0;
-  color: rgba(255, 250, 244, 0.88);
-  font-size: 13px;
-  line-height: 1.65;
-  text-shadow: 0 1px 7px rgba(0, 0, 0, 0.9);
-}
-
-.page-messages .response-sharing-note {
-  text-align: center;
-}
-
 .ask-actions button:disabled {
   cursor: wait;
   opacity: 0.72;
