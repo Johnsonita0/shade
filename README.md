@@ -23,7 +23,7 @@ Create a Static Site for this repository with build command `npm run build` and 
 
 Edit the message copy in `src/slides.js`.
 
-The opening splash lasts 5.5 seconds before the apology appears. Six temporary stock portraits from Unsplash are included as full-screen backgrounds and a splash photo frame. Replace them with Shade's photos in `public/photos/` and list up to six filenames in `public/photos.json`; the background gently crossfades and zooms every three seconds.
+The opening splash lasts 5.5 seconds before the apology appears. The two photos in `public/photos.json` are used for the splash and gently crossfading background.
 
 ## Private activity dashboard
 
