@@ -60,6 +60,7 @@ export default function App() {
     const audio = musicRef.current;
     if (!audio) return;
     audio.volume = 0.2;
+    audio.muted = false;
     try {
       await audio.play();
       setIsMusicPlaying(true);
@@ -68,21 +69,40 @@ export default function App() {
     }
   }, []);
 
+  const startCharmTrack = useCallback(async () => {
+    const audio = musicRef.current;
+    if (!audio) return;
+    audio.pause();
+    audio.src = "/charm.aac";
+    audio.load();
+    audio.volume = 0.2;
+    try {
+      await audio.play();
+      setIsMusicPlaying(!audio.muted);
+    } catch {
+      setIsMusicPlaying(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (showSplash) return;
+    void playBackgroundMusic();
+  }, [showSplash, playBackgroundMusic]);
+
   const handleSplashFinished = useCallback(() => {
     setShowSplash(false);
     setShowFireworks(true);
     setHeroAnimationKey((key) => key + 1);
-    void playBackgroundMusic();
-  }, [playBackgroundMusic]);
+  }, []);
   const handleFireworksFinished = useCallback(() => setShowFireworks(false), []);
 
   const handleMusicToggle = () => {
     const audio = musicRef.current;
     if (!audio) return;
-    if (audio.paused) {
+    if (audio.paused || audio.muted) {
       void playBackgroundMusic();
     } else {
-      audio.pause();
+      audio.muted = true;
       setIsMusicPlaying(false);
     }
   };
@@ -128,22 +148,23 @@ export default function App() {
         src="/forgeive.mp3"
         loop
         preload="auto"
-        onPlay={() => setIsMusicPlaying(true)}
-        onPause={() => setIsMusicPlaying(false)}
+        onPlay={() => setIsMusicPlaying(!musicRef.current?.muted)}
       />
       <PhotoBackdrop />
       <div className="backdrop-shade" aria-hidden="true" />
       <header className="scene-header" aria-label="A note for Shade">
         <span className="scene-note">A note, just for you</span>
-        <button
-          className="music-toggle"
-          type="button"
-          aria-label={isMusicPlaying ? "Pause background music" : "Play background music"}
-          aria-pressed={isMusicPlaying}
-          onClick={handleMusicToggle}
-        >
-          {isMusicPlaying ? "Music on" : "Music off"}
-        </button>
+        {!showSplash && (
+          <button
+            className="music-toggle"
+            type="button"
+            aria-label={isMusicPlaying ? "Mute background music" : "Unmute background music"}
+            aria-pressed={isMusicPlaying}
+            onClick={handleMusicToggle}
+          >
+            {isMusicPlaying ? "Music on" : "Music off"}
+          </button>
+        )}
       </header>
       <main
         className={`page${screen === "yes" && !submittedChoice ? " page-calendar" : ""}${screen === "messages" ? " page-messages" : ""}${screen === "yes" && submittedChoice ? " page-celebration" : ""}`}
@@ -158,6 +179,7 @@ export default function App() {
                 onChangeSlide={setCurrentSlide}
                 onChooseResponse={() => {
                   if (!postYesFlowEnabled) return;
+                  void startCharmTrack();
                   setSubmittedChoice(null);
                   setScreen("yes");
                 }}
