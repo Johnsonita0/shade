@@ -13,8 +13,6 @@ const savedResponseKey = "shade-invitation-response";
 function readSavedResponse() {
   try {
     const savedResponse = JSON.parse(window.localStorage.getItem(savedResponseKey) || "null");
-    if (savedResponse?.type === "maybe_later") return savedResponse;
-
     if (
       savedResponse?.type === "date_selected" &&
       /^\d{4}-\d{2}-\d{2}$/.test(savedResponse.choice?.date) &&
@@ -33,7 +31,6 @@ export default function App() {
   const [savedResponse, setSavedResponse] = useState(readSavedResponse);
   const [screen, setScreen] = useState(() => {
     if (savedResponse?.type === "date_selected") return "yes";
-    if (savedResponse?.type === "maybe_later") return "later";
     return "hero";
   });
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -105,7 +102,7 @@ export default function App() {
         <span className="scene-note">A note, just for you</span>
       </header>
       <main
-        className={`page${screen === "yes" && !submittedChoice ? " page-calendar" : ""}${screen === "messages" ? " page-messages" : ""}`}
+        className={`page${screen === "yes" && !submittedChoice ? " page-calendar" : ""}${screen === "messages" ? " page-messages" : ""}${screen === "yes" && submittedChoice ? " page-celebration" : ""}`}
         inert={showSplash || undefined}
       >
         <div className="letter">
@@ -115,14 +112,9 @@ export default function App() {
               <MessageSlider
                 currentSlide={currentSlide}
                 onChangeSlide={setCurrentSlide}
-                onChooseResponse={(accepted) => {
-                  if (accepted) {
-                    setSubmittedChoice(null);
-                    setScreen("yes");
-                    return;
-                  }
-                  saveResponse({ type: "maybe_later" });
-                  setScreen("later");
+                onChooseResponse={() => {
+                  setSubmittedChoice(null);
+                  setScreen("yes");
                 }}
               />
             )}
@@ -137,8 +129,9 @@ export default function App() {
                   setFollowUpSubmitted(false);
                   saveResponse({ type: "date_selected", choice, followUpSubmitted: false });
                 }}
-                onFollowUpSubmitted={() => {
+                onFollowUpSubmitted={(followUpType) => {
                   setFollowUpSubmitted(true);
+                  if (followUpType === "maybe_later") setScreen("later");
                   if (savedResponse?.type === "date_selected") {
                     saveResponse({ ...savedResponse, followUpSubmitted: true });
                   }

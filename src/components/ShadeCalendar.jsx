@@ -99,7 +99,7 @@ export default function ShadeCalendar({ onSubmitted }) {
   return (
     <section className="shade-calendar" aria-labelledby="calendar-title">
       <div className="calendar-heading">
-        <p className="eyebrow">Choose a shawarma date</p>
+        <p className="eyebrow">Choose a time for the apology sit-out</p>
         <h2 id="calendar-title">Shade Calendar</h2>
         <p className="calendar-intro">Pick a day and a time that feel good to you. No rush.</p>
       </div>

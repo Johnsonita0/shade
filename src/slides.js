@@ -19,9 +19,9 @@ export const slides = [
   },
   {
     eyebrow: "Only if you want to",
-    title: "A sit-out or shawarma?",
+    title: "An apology sit-out?",
     message:
-      "If you're open to it, I'd love to share a shawarma or sit out together sometime. The apology stands either way.",
+      "If you're open to it, I'd love to sit out together sometime and share my apology. The apology stands either way.",
     invitation: true,
   },
 ];

@@ -199,7 +199,7 @@ export default function Admin() {
                 <strong>{events.filter((event) => event.response === "maybe_later").length}</strong>
               </article>
               <article>
-                <span>Shawarma dates</span>
+                <span>Apology sit-outs</span>
                 <strong>{events.filter((event) => event.response === "date_selected").length}</strong>
               </article>
               <article>
@@ -226,7 +226,7 @@ export default function Admin() {
                             ? "Maybe later"
                             : event.response === "reschedule_requested"
                               ? "Reschedule requested"
-                              : "Shawarma date chosen"}
+                              : "Apology sit-out chosen"}
                         </strong>
                         <span>{event.response === "date_selected" ? "Shade Calendar" : "Follow-up"}</span>
                         {(event.selected_date || event.selected_time) && (

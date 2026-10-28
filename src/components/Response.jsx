@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { randomAosAnimation } from "../aosAnimations.js";
 import { getCalendarLinks } from "../lib/calendar.js";
 import { supabase } from "../lib/supabase.js";
@@ -23,12 +23,6 @@ export default function Response({
     () => submittedChoice ? getCalendarLinks({ ...submittedChoice, timeZone }) : null,
     [submittedChoice, timeZone],
   );
-
-  useEffect(() => {
-    return () => {
-      if (calendarLinks) URL.revokeObjectURL(calendarLinks.downloadUrl);
-    };
-  }, [calendarLinks]);
 
   if (accepted && submittedChoice) {
     const date = new Date(`${submittedChoice.date}T12:00:00`).toLocaleDateString(undefined, {
@@ -56,7 +50,7 @@ export default function Response({
           reason: reason.trim(),
         });
         if (error) throw error;
-        onFollowUpSubmitted();
+        onFollowUpSubmitted(followUpType);
       } catch (error) {
         console.error("Could not submit the follow-up response.", error);
         setFollowUpMessage("That didn't go through just yet. Please try again.");
@@ -66,32 +60,16 @@ export default function Response({
     }
 
     return (
-      <section className="content response" aria-labelledby="response-title">
+      <section className="content response response-celebration" aria-labelledby="response-title">
         <p className="eyebrow" data-aos={animation}>Thank you for choosing</p>
-        <h2 id="response-title" data-aos={animation}>A shawarma date is chosen!</h2>
-        <p className="response-copy" data-aos={animation}>{date} at {time}</p>
+        <h2 id="response-title" data-aos={animation}>The apology sit-out is set!</h2>
+        <p className="response-date" data-aos={animation}>{date}<span aria-hidden="true"> · </span>{time}</p>
         <p className="response-copy celebration-copy" data-aos={animation}>
           I&apos;m so happy and looking forward to it, Shade. If plans change, just let me know—no pressure.
         </p>
-        <div className="calendar-add-card" aria-label="Add the date to your calendar">
-          <img src="/shawarma.svg" alt="" width="42" height="42" />
-          <div>
-            <strong>Add it to your calendar</strong>
-            <p>One-hour event with the date and time above.</p>
-          </div>
-        </div>
-        <div className="calendar-add-actions">
-          <a className="primary-button" href={calendarLinks.googleUrl} target="_blank" rel="noreferrer">
-            Add to Google Calendar
-          </a>
-          <a className="secondary-button" href={calendarLinks.downloadUrl} download={calendarLinks.fileName}>
-            Download calendar file
-          </a>
-        </div>
-        <p className="calendar-reminder-note">
-          The calendar file requests alerts at the event time and 30 minutes before. Google Calendar may use
-          your default reminders instead; check the event after adding it. No Google account access is used here.
-        </p>
+        <a className="primary-button" href={calendarLinks} target="_blank" rel="noreferrer">
+          Add to Google Calendar
+        </a>
         <section className="follow-up" aria-labelledby="follow-up-title">
           {followUpSubmitted ? (
             <p className="follow-up-confirmation" role="status">Thanks for letting me know. I&apos;ll respect that.</p>

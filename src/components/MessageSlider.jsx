@@ -4,19 +4,48 @@ import { supabase } from "../lib/supabase.js";
 import { slides } from "../slides.js";
 
 export default function MessageSlider({ currentSlide, onChangeSlide, onChooseResponse }) {
+  const maybeLaterDodgeOffsets = [
+    { x: 12, y: -28 },
+    { x: -16, y: 20 },
+    { x: 8, y: -32 },
+    { x: -10, y: -20 },
+    { x: 0, y: 22 },
+  ];
   const slide = slides[currentSlide];
   const animation = useMemo(() => randomAosAnimation(), [currentSlide]);
   const [isLeaving, setIsLeaving] = useState(false);
   const [isSavingResponse, setIsSavingResponse] = useState(false);
   const [responseError, setResponseError] = useState("");
+  const [hasSubmittedMaybeLater, setHasSubmittedMaybeLater] = useState(false);
+  const [isMaybeLaterCueVisible, setShowMaybeLaterCue] = useState(false);
   const transitionTimer = useRef(null);
+  const maybeLaterCueTimer = useRef(null);
+  const maybeLaterActionRef = useRef(null);
+  const maybeLaterDodgeCount = useRef(0);
 
   useEffect(
     () => () => {
       window.clearTimeout(transitionTimer.current);
+      window.clearTimeout(maybeLaterCueTimer.current);
     },
     [],
   );
+
+  function showMaybeLaterCue() {
+    setShowMaybeLaterCue(true);
+    window.clearTimeout(maybeLaterCueTimer.current);
+    maybeLaterCueTimer.current = window.setTimeout(() => setShowMaybeLaterCue(false), 1500);
+  }
+
+  function dodgeMaybeLater(event) {
+    showMaybeLaterCue();
+    if (isSavingResponse || hasSubmittedMaybeLater) return;
+    if (event.type === "pointerdown") event.preventDefault();
+    const offset = maybeLaterDodgeOffsets[maybeLaterDodgeCount.current % maybeLaterDodgeOffsets.length];
+    maybeLaterDodgeCount.current += 1;
+    maybeLaterActionRef.current?.style.setProperty("--maybe-dodge-x", `${offset.x}px`);
+    maybeLaterActionRef.current?.style.setProperty("--maybe-dodge-y", `${offset.y}px`);
+  }
 
   function moveTo(index) {
     if (isLeaving || index === currentSlide) return;
@@ -49,7 +78,7 @@ export default function MessageSlider({ currentSlide, onChangeSlide, onChooseRes
         setResponseError("Your response couldn't be saved just yet. Please try again.");
         return;
       }
-      onChooseResponse(false);
+      setHasSubmittedMaybeLater(true);
     } catch (error) {
       console.error("Could not save the maybe-later response.", error);
       setResponseError("Your response couldn't be saved just yet. Please try again.");
@@ -97,14 +126,27 @@ export default function MessageSlider({ currentSlide, onChangeSlide, onChooseRes
             >
               Yes, I&apos;d like that
             </button>
-            <button
-              className="secondary-button"
-              type="button"
-              disabled={isSavingResponse}
-              onClick={() => void chooseResponse(false)}
+            <span
+              ref={maybeLaterActionRef}
+              className="maybe-later-action"
             >
-              {isSavingResponse ? "Saving your response..." : "Maybe later"}
-            </button>
+              {isMaybeLaterCueVisible && (
+                <span className="maybe-later-cue" aria-hidden="true">😂 👈 YES!</span>
+              )}
+              <button
+                className="secondary-button"
+                type="button"
+                disabled={isSavingResponse || hasSubmittedMaybeLater}
+                onPointerEnter={dodgeMaybeLater}
+                onPointerDown={dodgeMaybeLater}
+                onFocus={showMaybeLaterCue}
+                onClick={(event) => {
+                  if (event.detail === 0) void chooseResponse(false);
+                }}
+              >
+                {isSavingResponse ? "Saving your response..." : "Maybe later"}
+              </button>
+            </span>
           </div>
         </>
       ) : (
