@@ -99,7 +99,6 @@ export default function App() {
       <PhotoBackdrop />
       <div className="backdrop-shade" aria-hidden="true" />
       <header className="scene-header" aria-label="A note for Shade">
-        <span className="scene-mark">s.</span>
         <span className="scene-note">A note, just for you</span>
       </header>
       <main

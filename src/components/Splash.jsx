@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 
 function isPhotoFilename(filename) {
-  return typeof filename === "string" && /^[\w.-]+\.(jpg|jpeg|png|webp|avif)$/i.test(filename);
+  return typeof filename === "string" && /^[\w.\s-]+\.(jpg|jpeg|png|webp|avif)$/i.test(filename);
+}
+
+function getCarouselOffset(index, activeIndex, length) {
+  const distance = (index - activeIndex + length) % length;
+  if (distance === 0) return "0%";
+  return distance <= length / 2 ? "100%" : "-100%";
 }
 
 const preparationMessages = [
@@ -87,7 +93,7 @@ export default function Splash({ onFinished }) {
     if (photos.length < 2) return undefined;
     const photoTimer = window.setInterval(() => {
       setActivePhoto((index) => (index + 1) % photos.length);
-    }, 950);
+    }, 5600);
     return () => window.clearInterval(photoTimer);
   }, [photos.length]);
 
@@ -101,7 +107,11 @@ export default function Splash({ onFinished }) {
             <div
               className={`splash-background-photo${index === activePhoto ? " is-active" : ""}`}
               key={photo}
-              style={{ backgroundImage: `url("${photo}")` }}
+              data-photo-index={index}
+              style={{
+                "--photo-offset": getCarouselOffset(index, activePhoto, photos.length),
+                backgroundImage: `url("${photo}")`,
+              }}
             />
           ))}
         </div>
@@ -115,6 +125,8 @@ export default function Splash({ onFinished }) {
                 src={photo}
                 alt=""
                 key={photo}
+                data-photo-index={index}
+                style={{ "--photo-offset": getCarouselOffset(index, activePhoto, photos.length) }}
               />
             ))}
           </div>

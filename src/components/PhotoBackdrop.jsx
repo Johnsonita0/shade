@@ -3,8 +3,14 @@ import { useEffect, useState } from "react";
 function isPhotoFilename(filename) {
   return (
     typeof filename === "string" &&
-    /^[\w.-]+\.(jpg|jpeg|png|webp|avif)$/i.test(filename)
+    /^[\w.\s-]+\.(jpg|jpeg|png|webp|avif)$/i.test(filename)
   );
+}
+
+function getCarouselOffset(index, activeIndex, length) {
+  const distance = (index - activeIndex + length) % length;
+  if (distance === 0) return "0%";
+  return distance <= length / 2 ? "100%" : "-100%";
 }
 
 export default function PhotoBackdrop() {
@@ -60,7 +66,7 @@ export default function PhotoBackdrop() {
     if (photos.length < 2) return undefined;
     const timer = window.setInterval(() => {
       setActivePhoto((index) => (index + 1) % photos.length);
-    }, 3000);
+    }, 5600);
     return () => window.clearInterval(timer);
   }, [photos.length]);
 
@@ -68,9 +74,13 @@ export default function PhotoBackdrop() {
     <div className={`photo-backdrop${photos.length ? "" : " has-no-photos"}`} aria-hidden="true">
       {photos.map((photo, index) => (
         <div
-          className={`backdrop-photo${activePhoto === index ? " is-active" : ""}${photos.length === 1 ? " is-single-photo" : ""}`}
+          className={`backdrop-photo${activePhoto === index ? " is-active" : ""}`}
           key={photo}
-          style={{ backgroundImage: `url("${photo}")` }}
+          data-photo-index={index}
+          style={{
+            "--photo-offset": getCarouselOffset(index, activePhoto, photos.length),
+            backgroundImage: `url("${photo}")`,
+          }}
         />
       ))}
     </div>
