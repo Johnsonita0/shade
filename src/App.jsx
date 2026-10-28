@@ -69,11 +69,11 @@ export default function App() {
     }
   }, []);
 
-  const startCharmTrack = useCallback(async () => {
+  const startYesTrack = useCallback(async () => {
     const audio = musicRef.current;
     if (!audio) return;
     audio.pause();
-    audio.src = "/charm.aac";
+    audio.src = "/myhand.mp3";
     audio.load();
     audio.volume = 0.2;
     try {
@@ -179,7 +179,7 @@ export default function App() {
                 onChangeSlide={setCurrentSlide}
                 onChooseResponse={() => {
                   if (!postYesFlowEnabled) return;
-                  void startCharmTrack();
+                  void startYesTrack();
                   setSubmittedChoice(null);
                   setScreen("yes");
                 }}
