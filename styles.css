@@ -2399,9 +2399,20 @@ h2,
   position: absolute;
   z-index: -2;
   inset: -4%;
+}
+
+.splash-background-photo {
+  position: absolute;
+  inset: 0;
   background-position: center 38%;
   background-size: cover;
+  opacity: 0;
+  transition: opacity 650ms ease-in-out;
   animation: splash-background-zoom 5.5s ease-in-out both;
+}
+
+.splash-background-photo.is-active {
+  opacity: 1;
 }
 
 .splash-content {
@@ -2537,7 +2548,7 @@ h2,
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .splash-photo-background {
+  .splash-background-photo {
     animation: none;
   }
 

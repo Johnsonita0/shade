@@ -96,11 +96,15 @@ export default function Splash({ onFinished }) {
   return (
     <div className={`splash${isFinished ? " is-finished" : ""}`} role="status" aria-live="polite">
       {photos.length > 0 && (
-        <div
-          className="splash-photo-background"
-          style={{ backgroundImage: `url("${photos[0]}")` }}
-          aria-hidden="true"
-        />
+        <div className="splash-photo-background" aria-hidden="true">
+          {photos.map((photo, index) => (
+            <div
+              className={`splash-background-photo${index === activePhoto ? " is-active" : ""}`}
+              key={photo}
+              style={{ backgroundImage: `url("${photo}")` }}
+            />
+          ))}
+        </div>
       )}
       <div className="splash-content">
         {photos.length > 0 && (

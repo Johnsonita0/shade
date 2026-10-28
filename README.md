@@ -23,7 +23,7 @@ Create a Static Site for this repository with build command `npm run build` and 
 
 Edit the message copy in `src/slides.js`.
 
-The opening splash lasts 5.5 seconds before the apology appears. The two photos in `public/photos.json` are used for the splash and gently crossfading background.
+The opening splash lasts 5.5 seconds before the apology appears. The three photos in `public/photos.json` are used for the splash and gently crossfading background.
 
 ## Private activity dashboard
 

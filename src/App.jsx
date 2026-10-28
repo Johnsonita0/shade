@@ -9,6 +9,7 @@ import Response from "./components/Response.jsx";
 import Splash from "./components/Splash.jsx";
 
 const savedResponseKey = "shade-invitation-response";
+const postYesFlowEnabled = false;
 
 function readSavedResponse() {
   try {
@@ -30,7 +31,7 @@ export default function App() {
   const isAdminRoute = window.location.pathname.replace(/\/+$/, "") === "/admin";
   const [savedResponse, setSavedResponse] = useState(readSavedResponse);
   const [screen, setScreen] = useState(() => {
-    if (savedResponse?.type === "date_selected") return "yes";
+    if (postYesFlowEnabled && savedResponse?.type === "date_selected") return "yes";
     return "hero";
   });
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -113,6 +114,7 @@ export default function App() {
                 currentSlide={currentSlide}
                 onChangeSlide={setCurrentSlide}
                 onChooseResponse={() => {
+                  if (!postYesFlowEnabled) return;
                   setSubmittedChoice(null);
                   setScreen("yes");
                 }}
