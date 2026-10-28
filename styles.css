@@ -907,6 +907,24 @@ body.admin-route {
   padding-top: 15px;
 }
 
+.music-toggle {
+  min-height: 40px;
+  border: 1px solid rgba(255, 250, 244, 0.46);
+  border-radius: 999px;
+  padding: 0 14px;
+  background: rgba(18, 19, 18, 0.38);
+  color: rgba(255, 250, 244, 0.9);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+
+.music-toggle:hover {
+  border-color: rgba(255, 250, 244, 0.8);
+  background: rgba(18, 19, 18, 0.58);
+}
+
 .scene-note,
 .scene-footer {
   color: rgba(255, 250, 244, 0.72);

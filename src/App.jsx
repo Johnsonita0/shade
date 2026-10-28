@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import AOS from "aos";
 import Admin from "./components/Admin.jsx";
 import PhotoBackdrop from "./components/PhotoBackdrop.jsx";
@@ -37,7 +37,9 @@ export default function App() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showSplash, setShowSplash] = useState(!savedResponse);
   const [showFireworks, setShowFireworks] = useState(false);
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [heroAnimationKey, setHeroAnimationKey] = useState(0);
+  const musicRef = useRef(null);
   const [submittedChoice, setSubmittedChoice] = useState(() =>
     savedResponse?.type === "date_selected" ? savedResponse.choice : null,
   );
@@ -54,12 +56,36 @@ export default function App() {
     }
   };
 
+  const playBackgroundMusic = useCallback(async () => {
+    const audio = musicRef.current;
+    if (!audio) return;
+    audio.volume = 0.2;
+    try {
+      await audio.play();
+      setIsMusicPlaying(true);
+    } catch {
+      setIsMusicPlaying(false);
+    }
+  }, []);
+
   const handleSplashFinished = useCallback(() => {
     setShowSplash(false);
     setShowFireworks(true);
     setHeroAnimationKey((key) => key + 1);
-  }, []);
+    void playBackgroundMusic();
+  }, [playBackgroundMusic]);
   const handleFireworksFinished = useCallback(() => setShowFireworks(false), []);
+
+  const handleMusicToggle = () => {
+    const audio = musicRef.current;
+    if (!audio) return;
+    if (audio.paused) {
+      void playBackgroundMusic();
+    } else {
+      audio.pause();
+      setIsMusicPlaying(false);
+    }
+  };
 
   useEffect(() => {
     AOS.init({
@@ -90,16 +116,34 @@ export default function App() {
   const handleOpenNote = () => {
     setCurrentSlide(0);
     setScreen("messages");
+    if (musicRef.current?.paused) void playBackgroundMusic();
   };
 
   if (isAdminRoute) return <Admin />;
 
   return (
     <div className="app-shell">
+      <audio
+        ref={musicRef}
+        src="/forgeive.mp3"
+        loop
+        preload="auto"
+        onPlay={() => setIsMusicPlaying(true)}
+        onPause={() => setIsMusicPlaying(false)}
+      />
       <PhotoBackdrop />
       <div className="backdrop-shade" aria-hidden="true" />
       <header className="scene-header" aria-label="A note for Shade">
         <span className="scene-note">A note, just for you</span>
+        <button
+          className="music-toggle"
+          type="button"
+          aria-label={isMusicPlaying ? "Pause background music" : "Play background music"}
+          aria-pressed={isMusicPlaying}
+          onClick={handleMusicToggle}
+        >
+          {isMusicPlaying ? "Music on" : "Music off"}
+        </button>
       </header>
       <main
         className={`page${screen === "yes" && !submittedChoice ? " page-calendar" : ""}${screen === "messages" ? " page-messages" : ""}${screen === "yes" && submittedChoice ? " page-celebration" : ""}`}
