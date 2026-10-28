@@ -19,7 +19,7 @@ const preparationMessages = [
 
 export default function Splash({ onFinished }) {
   const [messageIndex, setMessageIndex] = useState(0);
-  const [photos, setPhotos] = useState([]);
+  const [photos, setPhotos] = useState(["/photos/pic 1.jpg"]);
   const [activePhoto, setActivePhoto] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
   const [isRemoved, setIsRemoved] = useState(false);
@@ -37,17 +37,23 @@ export default function Splash({ onFinished }) {
           throw new Error("public/photos.json must contain an array of image filenames.");
         }
 
+        const photoPaths = filenames
+          .filter(isPhotoFilename)
+          .slice(0, 6)
+          .map((filename) => `/photos/${filename}`);
+        if (active && photoPaths.length > 0) setPhotos(photoPaths);
+
         const loadedPhotos = await Promise.all(
-          filenames.filter(isPhotoFilename).slice(0, 6).map(
-            (filename) =>
+          photoPaths.map(
+            (photoPath) =>
               new Promise((resolve) => {
                 const image = new Image();
-                image.onload = () => resolve(`/photos/${filename}`);
+                image.onload = () => resolve(photoPath);
                 image.onerror = () => {
-                  console.warn(`Could not load splash photo: ${filename}`);
+                  console.warn(`Could not load splash photo: ${photoPath}`);
                   resolve(null);
                 };
-                image.src = `/photos/${filename}`;
+                image.src = photoPath;
               }),
           ),
         );

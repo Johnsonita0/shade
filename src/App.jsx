@@ -9,7 +9,7 @@ import Response from "./components/Response.jsx";
 import Splash from "./components/Splash.jsx";
 
 const savedResponseKey = "shade-invitation-response";
-const postYesFlowEnabled = false;
+const postYesFlowEnabled = true;
 
 function readSavedResponse() {
   try {
